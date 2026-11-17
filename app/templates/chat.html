@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}CampusAssist | NIT Durgapur AI Student Assistant{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}?v=4.0">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+
+  <!-- Mobile Overlay Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+  <!-- Left Sidebar: Topics, Suggestions, and Session Control -->
+  <aside class="chat-sidebar" id="chatSidebar" aria-label="Knowledge Navigation and Controls">
+    
+    <div class="sidebar-header">
+      <div class="sidebar-title-group">
+        <div class="sidebar-logo-frame">
+          <img src="{{ url_for('static', filename='images/download.svg') }}" alt="NIT Durgapur Emblem" class="sidebar-logo-img">
+        </div>
+        <div class="sidebar-brand-meta">
+          <h3>NIT Durgapur</h3>
+          <span class="sidebar-sub-badge">Student Helpdesk &bull; Estd. 1960</span>
+        </div>
+      </div>
+      <button type="button" class="sidebar-close-btn" id="closeSidebarBtn" aria-label="Close sidebar">✕</button>
+    </div>
+
+    <!-- Session Management Action -->
+    <div class="sidebar-section session-section">
+      <button type="button" class="btn-new-chat" id="clearChatBtn" title="Reset conversation and start fresh" aria-label="Start new conversation">
+        <span class="btn-icon">✨</span>
+        <span>New Conversation</span>
+      </button>
+      <div class="session-info-badge">
+        <span class="session-label">Session:</span>
+        <span class="session-val" id="sessionDisplay">Active</span>
+      </div>
+    </div>
+
+    <!-- Tab Navigation: Conversations vs Topics -->
+    <div class="sidebar-tabs-nav" role="tablist">
+      <button type="button" class="sidebar-tab-btn active" id="tabBtnConversations" role="tab" aria-selected="true" aria-controls="tabPaneConversations">
+        <span>💬</span> Chats
+      </button>
+      <button type="button" class="sidebar-tab-btn" id="tabBtnExplore" role="tab" aria-selected="false" aria-controls="tabPaneExplore">
+        <span>💡</span> Explore
+      </button>
+    </div>
+
+    <!-- Tab Pane 1: Previous Conversations -->
+    <div class="sidebar-tab-pane active" id="tabPaneConversations" role="tabpanel">
+      <div class="conversations-header">
+        <span class="conversations-title">Your Sessions</span>
+        <button type="button" class="btn-clear-all-chats" id="clearAllConversationsBtn" title="Clear all saved conversation history" aria-label="Clear all saved conversations">
+          Clear All
+        </button>
+      </div>
+      <div class="conversation-list" id="conversationList" role="list" aria-label="Previous Conversations">
+        <!-- Rendered dynamically by chat.js -->
+        <div class="conversations-empty-state" id="conversationsEmptyState">
+          <span class="empty-icon">💭</span>
+          <span>No past conversations yet.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Pane 2: Explore Topics & Suggested Questions -->
+    <div class="sidebar-tab-pane" id="tabPaneExplore" role="tabpanel" style="display: none;">
+      <!-- Suggested Questions -->
+      <div class="sidebar-section">
+        <div class="section-title-wrapper">
+          <span class="section-icon">💡</span>
+          <h4>Suggested Questions</h4>
+        </div>
+        <div class="quick-questions">
+          <button type="button" class="suggestion-chip featured" data-query="How can I apply for hostel leave?">
+            <span class="chip-dot"></span>
+            <span>How can I apply for hostel leave?</span>
+          </button>
+          <button type="button" class="suggestion-chip featured" data-query="What information is available about hostel facilities?">
+            <span class="chip-dot"></span>
+            <span>What information is available about hostel facilities?</span>
+          </button>
+          <button type="button" class="suggestion-chip featured" data-query="How do I find examination information?">
+            <span class="chip-dot"></span>
+            <span>How do I find examination information?</span>
+          </button>
+          <button type="button" class="suggestion-chip" data-query="Can I change my hostel room?">
+            <span>Can I change my hostel room?</span>
+          </button>
+          <button type="button" class="suggestion-chip" data-query="Food quality is bad in hall mess">
+            <span>Food quality is bad in hall mess</span>
+          </button>
+          <button type="button" class="suggestion-chip" data-query="What is the minimum attendance required at NIT Durgapur?">
+            <span>What is the minimum attendance required?</span>
+          </button>
+          <button type="button" class="suggestion-chip" data-query="How to register for odd semester courses?">
+            <span>How to register for semester courses?</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Verified Topics Explorer -->
+      <div class="sidebar-section">
+        <div class="section-title-wrapper">
+          <span class="section-icon">📚</span>
+          <h4>Verified Domains</h4>
+        </div>
+        <div class="topic-pills">
+          {% for topic in topics %}
+            <div class="topic-pill" data-topic-slug="{{ topic.slug }}">
+              <span class="topic-icon">
+                {% if topic.slug == 'hostel' %}🏢{% elif topic.slug == 'academics' %}📖{% else %}📁{% endif %}
+              </span>
+              <div class="topic-meta">
+                <span class="topic-name">{{ topic.name }}</span>
+                <span class="topic-desc">{{ topic.description | truncate(42) }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Right Pane: Interactive Student Assistant Chat Area -->
+  <section class="chat-main" aria-label="Student Assistant Chat Interface">
+    
+    <!-- Chat Header Bar -->
+    <header class="chat-header">
+      <div class="header-left">
+        <button type="button" class="btn-sidebar-toggle" id="toggleSidebarBtn" aria-label="Toggle navigation sidebar">
+          ☰ Topics & History
+        </button>
+        <div class="header-ai-badge">
+          <img src="{{ url_for('static', filename='images/download.svg') }}" alt="NIT Durgapur" class="header-mascot-img">
+        </div>
+        <div class="chat-header-info">
+          <h2>CampusAssist <span class="header-tag">NITD</span></h2>
+          <p>National Institute of Technology Durgapur &bull; Student Helpdesk</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="visually-hidden" aria-hidden="true" style="display:none;">Verified Grounding</span>
+        <button type="button" class="header-action-btn" id="headerClearBtn" title="Clear current chat" aria-label="Clear current conversation">
+          <span>🗑️</span>
+          <span class="btn-text">Clear</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Error State Alert Banner -->
+    <div class="chat-error-banner" id="chatErrorBanner" style="display: none;" role="alert">
+      <div class="error-content">
+        <span class="error-icon">⚠️</span>
+        <span class="error-message" id="errorMessageText">An error occurred while contacting the assistant.</span>
+      </div>
+      <button type="button" class="btn-error-retry" id="errorRetryBtn">Retry</button>
+      <button type="button" class="btn-error-dismiss" id="errorDismissBtn" aria-label="Dismiss error">✕</button>
+    </div>
+
+    <!-- Chat Messages Stream Area -->
+    <div class="chat-messages" id="chatMessages" role="log" aria-live="polite">
+
+      <!-- Dynamic Welcome Screen (Displayed when no active conversation messages) -->
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-hero">
+          <div class="welcome-avatar-badge">
+            <img src="{{ url_for('static', filename='images/download.svg') }}" alt="NIT Durgapur Emblem" class="welcome-logo">
+          </div>
+          <div class="welcome-institute-pill">
+            <span class="inst-crest">🏛️</span>
+            <span>National Institute of Technology Durgapur</span>
+            <span class="inst-motto-tag">उद्योगः पुरुषस्य लक्षणम्</span>
+          </div>
+          <h1 class="welcome-title">CampusAssist</h1>
+          <p class="welcome-subtitle">
+            Welcome to CampusAssist, the official student helpdesk for <strong>National Institute of Technology Durgapur</strong>.
+            Ask questions about hostel rules, academic procedures, exams, and campus facilities.
+          </p>
+        </div>
+
+        <!-- 3 Feature Quick-Start Cards -->
+        <div class="welcome-cards-grid">
+          <div class="welcome-card" data-query="How can I apply for hostel leave?">
+            <div class="card-icon-wrap hall-icon">
+              <span class="card-icon">🏢</span>
+            </div>
+            <h4>Hostel Leave &amp; Gate Pass</h4>
+            <p>Gate passes, parental consent rules, caretaker approvals, and overnight stay procedures.</p>
+            <span class="card-action">Ask about Leave &rarr;</span>
+          </div>
+
+          <div class="welcome-card" data-query="What information is available about hostel facilities?">
+            <div class="card-icon-wrap facility-icon">
+              <span class="card-icon">🛠️</span>
+            </div>
+            <h4>Hostel Facilities &amp; Rules</h4>
+            <p>Room maintenance, electrical/water issues, curfew timings, and boarder discipline code.</p>
+            <span class="card-action">Explore Facilities &rarr;</span>
+          </div>
+
+          <div class="welcome-card" data-query="How do I find examination information?">
+            <div class="card-icon-wrap exam-icon">
+              <span class="card-icon">📚</span>
+            </div>
+            <h4>Examination &amp; Academics</h4>
+            <p>Mid/end semester examination rules, course registration, and attendance requirements.</p>
+            <span class="card-action">View Academic Rules &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Suggested Prompt Chips for Instant Start -->
+        <div class="welcome-prompts">
+          <span class="prompts-label">Try asking:</span>
+          <div class="prompt-pills-row">
+            <button type="button" class="welcome-prompt-pill" data-query="How can I apply for hostel leave?">
+              "How can I apply for hostel leave?"
+            </button>
+            <button type="button" class="welcome-prompt-pill" data-query="What information is available about hostel facilities?">
+              "What information is available about hostel facilities?"
+            </button>
+            <button type="button" class="welcome-prompt-pill" data-query="How do I find examination information?">
+              "How do I find examination information?"
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Chat Input Area Form -->
+    <div class="chat-input-area">
+      <form class="chat-form" id="chatForm" aria-label="Ask a question">
+        <div class="input-wrapper">
+          <textarea
+            id="queryInput"
+            class="chat-input"
+            rows="1"
+            placeholder="Ask anything about NIT Durgapur (e.g., 'How can I apply for hostel leave?')..."
+            aria-label="Student question input"
+            autocomplete="off"
+            required
+          ></textarea>
+          <button type="submit" class="chat-send-btn" id="sendBtn" aria-label="Send question" title="Send message (Enter)">
+            <span class="send-label">Send</span>
+            <span class="send-icon">➤</span>
+          </button>
+        </div>
+      </form>
+      <div class="chat-disclaimer">
+        <span>🛡️ Grounded in verified NIT Durgapur records. Queries without verified answers are logged for administrator review.</span>
+      </div>
+    </div>
+
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/chat.js') }}?v=4.0"></script>
+{% endblock %}

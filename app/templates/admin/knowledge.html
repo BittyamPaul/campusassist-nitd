@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}Knowledge Base | CampusAssist Administration{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+  
+  <div class="admin-page-header">
+    <div class="admin-page-title">
+      <h1>NIT Durgapur Knowledge Repository</h1>
+      <p>Authoritative procedures, rules, official procedures, and student guidelines</p>
+    </div>
+
+    <div class="admin-nav-tabs">
+      <a href="{{ url_for('main.admin_dashboard') }}" class="admin-tab">Overview</a>
+      <a href="{{ url_for('main.admin_knowledge') }}" class="admin-tab active">Knowledge Repository</a>
+      <a href="{{ url_for('main.admin_taxonomy') }}" class="admin-tab">Topics &amp; Intents</a>
+      <a href="{{ url_for('main.admin_unresolved') }}" class="admin-tab">Unresolved Queries</a>
+      <a href="{{ url_for('main.admin_audit') }}" class="admin-tab">Audit Trail</a>
+    </div>
+  </div>
+
+  <!-- Search, Filter & Action Toolbar -->
+  <div class="data-card" style="margin-bottom: 1.25rem; padding: 1.25rem;">
+    <div style="display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+      <div style="display: flex; gap: 0.75rem; align-items: center; flex: 1; min-width: 280px; flex-wrap: wrap;">
+        <input type="text" id="knowledge-search-input" class="form-control" placeholder="Search knowledge entries (title, summary, keywords)..." style="max-width: 380px; padding: 0.5rem 0.85rem;">
+        
+        <select id="knowledge-filter-topic" class="form-control" style="width: auto; padding: 0.5rem 0.85rem;">
+          <option value="">All Topics</option>
+          {% for t in topics %}
+            <option value="{{ t.name }}">{{ t.name }}</option>
+          {% endfor %}
+        </select>
+
+        <select id="knowledge-filter-status" class="form-control" style="width: auto; padding: 0.5rem 0.85rem;">
+          <option value="">All Statuses</option>
+          <option value="verified">Verified Only</option>
+          <option value="draft">Draft Only</option>
+          <option value="deprecated">Deprecated Only</option>
+        </select>
+
+        <select id="knowledge-filter-active" class="form-control" style="width: auto; padding: 0.5rem 0.85rem;">
+          <option value="">Active &amp; Inactive</option>
+          <option value="active">Active Only</option>
+          <option value="inactive">Inactive Only</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-action btn-primary" id="btn-open-create-knowledge">
+        + Create Knowledge Entry
+      </button>
+    </div>
+  </div>
+
+  <!-- Knowledge Table -->
+  <div class="data-card">
+    <div class="data-card-header">
+      <h2>All Knowledge Articles (<span id="knowledge-count">{{ items|length }}</span>)</h2>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table" id="knowledge-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Topic &rarr; Intent</th>
+            <th>Title &amp; Summary</th>
+            <th>Verification</th>
+            <th>Active</th>
+            <th>Version</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+            <tr class="knowledge-row"
+                data-id="{{ item.id }}"
+                data-topic="{{ item.topic_name }}"
+                data-intent="{{ item.intent_name }}"
+                data-intent-id="{{ item.intent_id }}"
+                data-title="{{ item.title }}"
+                data-summary="{{ item.summary or '' }}"
+                data-content="{{ item.content or '' }}"
+                data-keywords="{{ item.keywords or '' }}"
+                data-status="{{ item.verification_status }}"
+                data-authority="{{ item.contact_authority or '' }}"
+                data-portal-url="{{ item.official_portal_url or '' }}"
+                data-source-reference="{{ item.source_reference or '' }}"
+                data-is-active="{{ 1 if item.is_active else 0 }}">
+              <td>#{{ item.id }}</td>
+              <td>
+                <strong>{{ item.topic_name }}</strong><br>
+                <code style="font-size: 0.78rem;">{{ item.intent_name }}</code>
+              </td>
+              <td>
+                <div style="font-weight: 600; color: var(--text-main);">{{ item.title }}</div>
+                <div style="font-size: 0.82rem; color: var(--text-muted); max-width: 420px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                  {{ item.summary }}
+                </div>
+              </td>
+              <td>
+                {% if item.verification_status == 'verified' %}
+                  <span class="badge badge-resolved">Verified</span>
+                {% elif item.verification_status == 'draft' %}
+                  <span class="badge badge-pending">Draft</span>
+                {% else %}
+                  <span class="badge">{{ item.verification_status }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if item.is_active %}
+                  <span class="badge badge-resolved">Active</span>
+                {% else %}
+                  <span class="badge badge-pending">Inactive</span>
+                {% endif %}
+              </td>
+              <td>v{{ item.version }}</td>
+              <td>
+                <div style="display: flex; gap: 0.35rem; align-items: center;">
+                  <button type="button" class="btn-action btn-secondary btn-edit-knowledge" style="padding: 0.3rem 0.6rem;">Edit</button>
+                  
+                  {% if item.verification_status != 'verified' %}
+                    <button type="button" class="btn-action btn-primary btn-verify-knowledge" data-id="{{ item.id }}" style="padding: 0.3rem 0.6rem; background: #059669;">Verify</button>
+                  {% endif %}
+
+                  {% if item.is_active %}
+                    <button type="button" class="btn-action btn-secondary btn-toggle-active-knowledge" data-id="{{ item.id }}" data-action="deactivate" style="padding: 0.3rem 0.5rem; font-size: 0.75rem; color: #f87171;">Disable</button>
+                  {% else %}
+                    <button type="button" class="btn-action btn-secondary btn-toggle-active-knowledge" data-id="{{ item.id }}" data-action="activate" style="padding: 0.3rem 0.5rem; font-size: 0.75rem; color: #34d399;">Enable</button>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="7" style="text-align: center; color: var(--text-dim); padding: 2rem;">No knowledge items found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal: Create / Edit Knowledge Entry -->
+<div class="admin-modal-backdrop" id="knowledge-modal" style="display: none;">
+  <div class="admin-modal-content" style="max-width: 650px;">
+    <div class="admin-modal-header">
+      <h2 id="knowledge-modal-title">Create Knowledge Entry</h2>
+      <button type="button" class="admin-modal-close" id="btn-close-knowledge-modal">&times;</button>
+    </div>
+
+    <form id="knowledge-form">
+      <input type="hidden" id="knowledge-id" name="id">
+
+      <div class="form-row" style="display: flex; gap: 1rem;">
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label" for="knowledge-intent-select">Associated Intent *</label>
+          <select id="knowledge-intent-select" name="intent_id" class="form-control" required>
+            <option value="">Select Intent...</option>
+            {% for i in intents %}
+              <option value="{{ i.id }}">{{ i.topic_name }} &rarr; {{ i.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group" style="width: 160px;">
+          <label class="form-label" for="knowledge-status-select">Status *</label>
+          <select id="knowledge-status-select" name="verification_status" class="form-control" required>
+            <option value="verified">Verified</option>
+            <option value="draft">Draft</option>
+            <option value="deprecated">Deprecated</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="knowledge-title-input">Article Title *</label>
+        <input type="text" id="knowledge-title-input" name="title" class="form-control" placeholder="e.g., Hostel Leave Application Procedure" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="knowledge-summary-input">Brief Summary *</label>
+        <input type="text" id="knowledge-summary-input" name="summary" class="form-control" placeholder="1-2 sentences summarizing the rule or procedure" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="knowledge-content-input">Authoritative Detailed Content / Procedure *</label>
+        <textarea id="knowledge-content-input" name="content" class="form-control" rows="6" placeholder="Authoritative NIT Durgapur procedure, rules, eligibility, and steps..." required></textarea>
+      </div>
+
+      <div class="form-row" style="display: flex; gap: 1rem;">
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label" for="knowledge-authority-input">Contact Authority</label>
+          <input type="text" id="knowledge-authority-input" name="contact_authority" class="form-control" placeholder="e.g., Chief Warden / Hall Warden Office">
+        </div>
+
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label" for="knowledge-portal-url-input">Official Portal URL</label>
+          <input type="text" id="knowledge-portal-url-input" name="official_portal_url" class="form-control" placeholder="e.g., https://nitdgp.ac.in/hostels">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="knowledge-keywords-input">Keywords (comma-separated)</label>
+        <input type="text" id="knowledge-keywords-input" name="keywords" class="form-control" placeholder="e.g., leave, gate pass, out pass, warden permission">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="knowledge-source-reference-input">Source / Official Reference</label>
+        <input type="text" id="knowledge-source-reference-input" name="source_reference" class="form-control" placeholder="e.g., NIT Durgapur Hall Regulations 2026, Section 4.2">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+        <button type="button" class="btn-action btn-secondary" id="btn-cancel-knowledge-modal">Cancel</button>
+        <button type="submit" class="btn-action btn-primary" id="btn-save-knowledge">Save &amp; Index</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

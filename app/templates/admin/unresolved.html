@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block title %}Unresolved Queries Triage | CampusAssist Administration{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+  
+  <!-- Header & Tabs -->
+  <div class="admin-page-header">
+    <div class="admin-page-title">
+      <h1>Unresolved Queries Triage Queue</h1>
+      <p>Review student inquiries lacking verified repository matches, inspect predictions, and upgrade institutional coverage</p>
+    </div>
+
+    <div class="admin-nav-tabs">
+      <a href="{{ url_for('main.admin_dashboard') }}" class="admin-tab">Overview</a>
+      <a href="{{ url_for('main.admin_knowledge') }}" class="admin-tab">Knowledge Repository</a>
+      <a href="{{ url_for('main.admin_taxonomy') }}" class="admin-tab">Topics &amp; Intents</a>
+      <a href="{{ url_for('main.admin_unresolved') }}" class="admin-tab active">Unresolved Queries ({{ pending_count }})</a>
+      <a href="{{ url_for('main.admin_audit') }}" class="admin-tab">Audit Trail</a>
+    </div>
+  </div>
+
+  <!-- Search & Filter Controls -->
+  <div class="data-card" style="margin-bottom: 1.25rem; padding: 1.25rem;">
+    <div style="display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+      <div style="display: flex; gap: 0.75rem; align-items: center; flex: 1; min-width: 280px; flex-wrap: wrap;">
+        <input type="text" id="unresolved-search-input" class="form-control" placeholder="Search student queries or topics..." style="max-width: 380px; padding: 0.5rem 0.85rem;">
+      </div>
+
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <a href="?status=all" class="btn-action {% if current_status == 'all' %}btn-primary{% else %}btn-secondary{% endif %}">All</a>
+        <a href="?status=pending" class="btn-action {% if current_status == 'pending' or current_status == 'unresolved' %}btn-primary{% else %}btn-secondary{% endif %}">Pending / Unresolved ({{ pending_count }})</a>
+        <a href="?status=under_review" class="btn-action {% if current_status == 'under_review' %}btn-primary{% else %}btn-secondary{% endif %}">Under Review ({{ under_review_count }})</a>
+        <a href="?status=verified" class="btn-action {% if current_status == 'verified' or current_status == 'resolved' %}btn-primary{% else %}btn-secondary{% endif %}">Verified</a>
+        <a href="?status=rejected" class="btn-action {% if current_status == 'rejected' %}btn-primary{% else %}btn-secondary{% endif %}">Rejected</a>
+        <a href="?status=closed" class="btn-action {% if current_status == 'closed' %}btn-primary{% else %}btn-secondary{% endif %}">Closed</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Queries Table -->
+  <div class="data-card">
+    <div class="data-card-header">
+      <h2>Queries Queue (<span id="unresolved-count">{{ queries|length }}</span>)</h2>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table" id="unresolved-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Student Question</th>
+            <th>Predicted Topic</th>
+            <th>Predicted Intent</th>
+            <th>Confidence</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for q in queries %}
+            <tr class="unresolved-row"
+                data-id="{{ q.id }}"
+                data-query-text="{{ q.query_text }}"
+                data-topic="{{ q.detected_topic or 'General' }}"
+                data-intent="{{ q.detected_intent or 'Unknown' }}"
+                data-class-conf="{{ ((q.classification_confidence or q.max_confidence or 0) * 100)|round(1) }}"
+                data-retrieval-conf="{{ ((q.retrieval_confidence or 0) * 100)|round(1) }}"
+                data-status="{{ q.status }}"
+                data-conversation-id="{{ q.conversation_id or '' }}"
+                data-created-at="{{ q.created_at }}"
+                data-admin-notes="{{ q.admin_notes or '' }}"
+                data-reviewed-by="{{ q.reviewed_by or '' }}">
+              <td>#{{ q.id }}</td>
+              <td>
+                <strong style="color: var(--text-main);">"{{ q.query_text }}"</strong>
+                {% if q.conversation_id %}
+                  <div style="font-size: 0.75rem; color: var(--text-dim);">Conv: {{ q.conversation_id[:12] }}...</div>
+                {% endif %}
+              </td>
+              <td>
+                <span class="badge" style="background: rgba(255, 255, 255, 0.06);">{{ q.detected_topic or 'General' }}</span>
+              </td>
+              <td>
+                <code style="font-size: 0.8rem;">{{ q.detected_intent or 'Unknown' }}</code>
+              </td>
+              <td>
+                <div style="font-size: 0.8rem;">
+                  <div>Class: <strong>{{ ((q.classification_confidence or q.max_confidence or 0) * 100)|round(1) }}%</strong></div>
+                  {% if q.retrieval_confidence is not none %}
+                    <div style="color: var(--text-muted); font-size: 0.74rem;">Retrieval: {{ ((q.retrieval_confidence or 0) * 100)|round(1) }}%</div>
+                  {% endif %}
+                </div>
+              </td>
+              <td>
+                {% if q.status in ('pending', 'unresolved') %}
+                  <span class="badge badge-pending">Unresolved</span>
+                {% elif q.status == 'under_review' %}
+                  <span class="badge" style="background: rgba(96, 165, 250, 0.2); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.4);">Under Review</span>
+                {% elif q.status in ('resolved', 'verified') %}
+                  <span class="badge badge-resolved">Verified</span>
+                {% elif q.status == 'rejected' %}
+                  <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">Rejected</span>
+                {% elif q.status == 'closed' %}
+                  <span class="badge" style="background: rgba(156, 163, 175, 0.15); color: #9ca3af; border: 1px solid rgba(156, 163, 175, 0.3);">Closed</span>
+                {% else %}
+                  <span class="badge">{{ q.status }}</span>
+                {% endif %}
+              </td>
+              <td style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">{{ q.created_at }}</td>
+              <td>
+                <div style="display: flex; gap: 0.35rem; align-items: center;">
+                  <button type="button" class="btn-action btn-secondary btn-inspect-query" data-id="{{ q.id }}" style="padding: 0.3rem 0.6rem;">Inspect</button>
+                  
+                  {% if q.status in ('pending', 'unresolved', 'under_review') %}
+                    <button type="button" class="btn-action btn-primary btn-open-resolve-modal" data-id="{{ q.id }}" data-query="{{ q.query_text }}" data-topic="{{ q.detected_topic }}" data-intent="{{ q.detected_intent }}" style="padding: 0.3rem 0.6rem;">Resolve</button>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                No unresolved queries found matching status '{{ current_status }}'.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal: Inspect Query Details -->
+<div class="admin-modal-backdrop" id="inspect-modal" style="display: none;">
+  <div class="admin-modal-content" style="max-width: 650px;">
+    <div class="admin-modal-header">
+      <h2>Inspect Student Query <span id="inspect-id-badge" style="font-size: 0.85rem; color: var(--text-muted);"></span></h2>
+      <button type="button" class="admin-modal-close" id="btn-close-inspect-modal">&times;</button>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.3rem;">Raw Student Inquiry</div>
+      <div id="inspect-query-text" style="font-size: 1.15rem; font-weight: 600; color: var(--text-main); background: rgba(0,0,0,0.25); padding: 0.85rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);"></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+      <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Predicted Topic</div>
+        <div id="inspect-topic" style="font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-top: 0.25rem;"></div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Predicted Intent</div>
+        <div id="inspect-intent" style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-top: 0.25rem;"></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.85rem;">
+        <span>Classification Confidence:</span>
+        <strong id="inspect-class-conf-text">0%</strong>
+      </div>
+      <div class="confidence-bar-container" style="background: rgba(255,255,255,0.08); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 1rem;">
+        <div id="inspect-class-conf-bar" style="background: var(--primary); height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.85rem;">
+        <span>Retrieval Similarity Confidence:</span>
+        <strong id="inspect-retrieval-conf-text">0%</strong>
+      </div>
+      <div class="confidence-bar-container" style="background: rgba(255,255,255,0.08); height: 8px; border-radius: 4px; overflow: hidden;">
+        <div id="inspect-retrieval-conf-bar" style="background: #34d399; height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; font-size: 0.85rem;">
+      <div>
+        <span style="color: var(--text-muted);">Current Status:</span>
+        <span id="inspect-status-badge" style="margin-left: 0.5rem;"></span>
+      </div>
+      <div>
+        <span style="color: var(--text-muted);">Submitted:</span>
+        <span id="inspect-created-at" style="margin-left: 0.5rem; color: var(--text-main);"></span>
+      </div>
+      <div style="grid-column: span 2;">
+        <span style="color: var(--text-muted);">Conversation ID:</span>
+        <code id="inspect-conv-id" style="margin-left: 0.5rem; font-size: 0.78rem;"></code>
+      </div>
+      <div style="grid-column: span 2;">
+        <span style="color: var(--text-muted);">Administrative Notes:</span>
+        <div id="inspect-notes" style="margin-top: 0.25rem; font-style: italic; color: var(--text-muted);">None</div>
+      </div>
+    </div>
+
+    <!-- Status Change & Action Buttons in Inspector -->
+    <div style="border-top: 1px solid var(--border-color); padding-top: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+      <div style="display: flex; gap: 0.5rem;">
+        <button type="button" class="btn-action btn-secondary" id="btn-inspect-under-review">Mark Under Review</button>
+        <button type="button" class="btn-action btn-secondary" id="btn-inspect-reject" style="color: #f87171;">Reject</button>
+        <button type="button" class="btn-action btn-secondary" id="btn-inspect-close" style="color: #9ca3af;">Close</button>
+      </div>
+
+      <button type="button" class="btn-action btn-primary" id="btn-inspect-resolve-direct">
+        Resolve with Verified Knowledge &rarr;
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Triage & Resolve Query -->
+<div class="admin-modal-backdrop" id="resolve-modal" style="display: none;">
+  <div class="admin-modal-content" style="max-width: 650px;">
+    <div class="admin-modal-header">
+      <h2>Resolve Student Query <span id="resolve-modal-id-badge" style="font-size: 0.85rem; color: var(--text-muted);"></span></h2>
+      <button type="button" class="admin-modal-close" id="btn-close-resolve-modal">&times;</button>
+    </div>
+
+    <div style="margin-bottom: 1.25rem; background: rgba(0,0,0,0.2); padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+      <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Inquiry</div>
+      <div id="resolve-modal-query-text" style="font-weight: 600; color: var(--text-main);"></div>
+    </div>
+
+    <!-- Method Tabs: Add Verified Knowledge vs Link to Existing Intent -->
+    <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+      <button type="button" class="btn-action btn-primary resolve-tab-btn" id="tab-btn-add-knowledge">Add Verified Knowledge</button>
+      <button type="button" class="btn-action btn-secondary resolve-tab-btn" id="tab-btn-map-intent">Link to Existing Intent</button>
+    </div>
+
+    <!-- Panel 1: Create Verified Knowledge & Index Immediately -->
+    <form id="resolve-new-knowledge-form">
+      <input type="hidden" id="resolve-query-id" name="query_id">
+
+      <div class="form-group">
+        <label class="form-label" for="resolve-intent-select">Associated Intent *</label>
+        <select id="resolve-intent-select" name="intent_id" class="form-control" required>
+          <option value="">Select Intent...</option>
+          {% for i in intents %}
+            <option value="{{ i.id }}">{{ i.topic_name }} &rarr; {{ i.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="resolve-title-input">Verified Knowledge Title *</label>
+        <input type="text" id="resolve-title-input" name="title" class="form-control" placeholder="e.g., Official Grade Card Duplicate Process" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="resolve-summary-input">Summary *</label>
+        <input type="text" id="resolve-summary-input" name="summary" class="form-control" placeholder="1-2 sentences summarizing authoritative answer" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="resolve-content-input">Authoritative NIT Durgapur Procedure / Content *</label>
+        <textarea id="resolve-content-input" name="content" class="form-control" rows="5" placeholder="Detailed official procedure, rules, and steps..." required></textarea>
+      </div>
+
+      <div class="form-row" style="display: flex; gap: 1rem;">
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label" for="resolve-authority-input">Contact Authority</label>
+          <input type="text" id="resolve-authority-input" name="contact_authority" class="form-control" placeholder="e.g., Academic Section / Dean SW">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label" for="resolve-url-input">Official Portal URL</label>
+          <input type="text" id="resolve-url-input" name="official_portal_url" class="form-control" placeholder="e.g., https://nitdgp.ac.in">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="resolve-notes-input">Administrative Triage Notes</label>
+        <input type="text" id="resolve-notes-input" name="notes" class="form-control" placeholder="Reason for adding this entry">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+        <button type="button" class="btn-action btn-secondary" id="btn-cancel-resolve-modal">Cancel</button>
+        <button type="submit" class="btn-action btn-primary">Save, Verify &amp; Index</button>
+      </div>
+    </form>
+
+    <!-- Panel 2: Link to Existing Intent -->
+    <form id="resolve-map-intent-form" style="display: none;">
+      <input type="hidden" id="resolve-map-query-id" name="query_id">
+
+      <div class="form-group">
+        <label class="form-label" for="resolve-map-intent-select">Select Existing Intent *</label>
+        <select id="resolve-map-intent-select" name="intent_id" class="form-control" required>
+          <option value="">Select Existing Intent...</option>
+          {% for i in intents %}
+            <option value="{{ i.id }}">{{ i.topic_name }} &rarr; {{ i.name }}</option>
+          {% endfor %}
+        </select>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;">
+          The student question will be associated with this intent to improve future classification.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="resolve-map-notes-input">Administrative Notes</label>
+        <input type="text" id="resolve-map-notes-input" name="notes" class="form-control" placeholder="e.g., Maps directly to existing hostel leave procedure">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+        <button type="button" class="btn-action btn-secondary" id="btn-cancel-map-modal">Cancel</button>
+        <button type="submit" class="btn-action btn-primary">Link &amp; Resolve</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

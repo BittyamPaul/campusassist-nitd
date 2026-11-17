@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CampusAssist | NIT Durgapur AI Student Assistant{% endblock %}</title>
+  <meta name="description" content="CampusAssist: Official student helpdesk for National Institute of Technology Durgapur. Reliable guidance on hostel rules, academic procedures, and campus facilities.">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/download.svg') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}?v=4.0">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Official Top Ribbon: Sleek Black Institutional Banner -->
+  <aside class="nitd-top-ribbon" aria-label="Institute Identification Banner">
+    <div class="ribbon-inner">
+      <div class="ribbon-left">
+        <span class="ribbon-crest">🏛️</span>
+        <span class="ribbon-text">NATIONAL INSTITUTE OF TECHNOLOGY DURGAPUR &bull; राष्ट्रीय प्रौद्योगिकी संस्थान दुर्गापुर</span>
+      </div>
+      <div class="ribbon-right">
+        <span class="ribbon-motto" title="Motto: Diligence is the Mark of a Man">उद्योगः पुरुषस्य लक्षणम्</span>
+        <span class="ribbon-estd">Estd. 1960</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Clean Top Navigation Bar -->
+  <header>
+    <nav class="site-navbar" aria-label="Main Navigation">
+      <a href="{{ url_for('main.index') }}" class="nav-brand" aria-label="CampusAssist Homepage">
+        <div class="brand-logo-frame">
+          <img src="{{ url_for('static', filename='images/download.svg') }}" alt="NIT Durgapur Official Emblem" class="brand-logo">
+        </div>
+        <div class="brand-text">
+          <div class="brand-title-row">
+            <span class="brand-title">CampusAssist</span>
+            <span class="brand-badge-nitd">NITD Helpdesk</span>
+          </div>
+          <span class="brand-subtitle">National Institute of Technology Durgapur</span>
+        </div>
+      </a>
+
+      <div class="nav-links">
+        <a href="{{ url_for('main.index') }}" class="nav-item {% if request.endpoint == 'main.index' %}active{% endif %}">
+          <span>💬</span> Student Assistant
+        </a>
+        {% if session.get('admin_logged_in') %}
+          <a href="{{ url_for('main.admin_dashboard') }}" class="nav-item {% if 'admin' in request.endpoint and 'login' not in request.endpoint %}active{% endif %}">
+            <span>⚙️</span> Admin Dashboard
+          </a>
+          <a href="{{ url_for('main.admin_logout') }}" class="nav-item nav-btn-outline">
+            Logout ({{ session.get('admin_username') }})
+          </a>
+        {% else %}
+          <a href="{{ url_for('main.admin_login') }}" class="nav-item nav-btn">
+            Staff Login
+          </a>
+        {% endif %}
+      </div>
+    </nav>
+  </header>
+
+  <!-- Flash Messaging Container -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container" role="alert">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Main Content Body -->
+  <main class="main-wrapper" id="mainContent">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-credits">
+      <strong>CampusAssist</strong> &bull; Department of Computer Science & Engineering &bull; <strong>National Institute of Technology Durgapur</strong>
+    </div>
+    <div class="footer-meta">
+      उद्योगः पुरुषस्य लक्षणम् &bull; Mahatma Gandhi Avenue, Durgapur - 713209, West Bengal, India &bull; Grounded Institutional RAG Architecture
+    </div>
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

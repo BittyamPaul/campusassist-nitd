@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | CampusAssist Administration{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+  
+  <!-- Page Header & Tab Navigation -->
+  <div class="admin-page-header">
+    <div class="admin-page-title">
+      <h1>Administration Dashboard</h1>
+      <p>System metrics, knowledge repository health, and unverified question triage</p>
+    </div>
+
+    <div class="admin-nav-tabs">
+      <a href="{{ url_for('main.admin_dashboard') }}" class="admin-tab active">Overview</a>
+      <a href="{{ url_for('main.admin_knowledge') }}" class="admin-tab">Knowledge Repository</a>
+      <a href="{{ url_for('main.admin_taxonomy') }}" class="admin-tab">Topics &amp; Intents</a>
+      <a href="{{ url_for('main.admin_unresolved') }}" class="admin-tab">Unresolved Queries</a>
+      <a href="{{ url_for('main.admin_audit') }}" class="admin-tab">Audit Trail</a>
+    </div>
+  </div>
+
+  <!-- Metric Overview Cards -->
+  <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-label">Total Knowledge</span>
+        <span class="stat-icon">📚</span>
+      </div>
+      <div class="stat-value">{{ summary.total_knowledge_entries }}</div>
+      <div class="stat-footer">Across {{ summary.total_topics }} topics &amp; {{ summary.total_intents }} intents</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-label">Verified Entries</span>
+        <span class="stat-icon">✅</span>
+      </div>
+      <div class="stat-value" style="color: #34d399;">{{ summary.verified_entries }}</div>
+      <div class="stat-footer">Active authoritative answers</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-label">Unresolved Queries</span>
+        <span class="stat-icon">⚠️</span>
+      </div>
+      <div class="stat-value" style="color: #fbbf24;">{{ summary.unresolved_queries }}</div>
+      <div class="stat-footer">Pending triage in review queue</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-label">Under Review</span>
+        <span class="stat-icon">🔍</span>
+      </div>
+      <div class="stat-value" style="color: #60a5fa;">{{ summary.queries_under_review }}</div>
+      <div class="stat-footer">Queries currently being evaluated</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-label">Verified Resolution Rate</span>
+        <span class="stat-icon">🛡️</span>
+      </div>
+      <div class="stat-value">{{ summary.stats.resolution_rate }}%</div>
+      <div class="stat-footer">{{ summary.stats.verified_queries }} / {{ summary.stats.total_queries }} queries answered</div>
+    </div>
+  </div>
+
+  <!-- Quick Action Shortcuts -->
+  <div style="display: flex; gap: 0.75rem; margin-bottom: 2rem; flex-wrap: wrap;">
+    <a href="{{ url_for('main.admin_knowledge') }}" class="btn-action btn-primary">Manage Knowledge Base</a>
+    <a href="{{ url_for('main.admin_unresolved') }}" class="btn-action btn-secondary">Review Unresolved Queue</a>
+    <a href="{{ url_for('main.admin_taxonomy') }}" class="btn-action btn-secondary">Configure Topics &amp; Intents</a>
+    <a href="{{ url_for('main.admin_audit') }}" class="btn-action btn-secondary">Inspect Audit Trail</a>
+  </div>
+
+  <!-- Recent Knowledge Updates -->
+  <div class="data-card">
+    <div class="data-card-header">
+      <h2>Recent Knowledge Updates</h2>
+      <a href="{{ url_for('main.admin_knowledge') }}" style="font-size: 0.85rem; color: var(--primary);">View all &rarr;</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Topic &rarr; Intent</th>
+            <th>Status</th>
+            <th>Version</th>
+            <th>Last Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in summary.recent_updates %}
+            <tr>
+              <td>#{{ item.id }}</td>
+              <td><strong>{{ item.title }}</strong></td>
+              <td>{{ item.topic_name }} &rarr; <code>{{ item.intent_name }}</code></td>
+              <td>
+                {% if item.verification_status == 'verified' and item.is_active %}
+                  <span class="badge badge-resolved">Verified &amp; Active</span>
+                {% elif not item.is_active %}
+                  <span class="badge badge-pending">Inactive</span>
+                {% else %}
+                  <span class="badge badge-verified">{{ item.verification_status }}</span>
+                {% endif %}
+              </td>
+              <td>v{{ item.version }}</td>
+              <td style="font-size: 0.82rem; color: var(--text-muted);">{{ item.updated_at }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-dim);">No recent updates found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Audit Logs Table -->
+  <div class="data-card">
+    <div class="data-card-header">
+      <h2>Recent System &amp; Administrative Audit Activity</h2>
+      <a href="{{ url_for('main.admin_audit') }}" style="font-size: 0.85rem; color: var(--primary);">Full audit log &rarr;</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Administrator</th>
+            <th>Action</th>
+            <th>Target</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in summary.recent_audits %}
+            <tr>
+              <td style="font-size: 0.82rem; color: var(--text-muted);">{{ log.created_at }}</td>
+              <td><strong>{{ log.admin_username }}</strong></td>
+              <td><span class="badge badge-verified">{{ log.action }}</span></td>
+              <td>{{ log.target_type or '-' }}</td>
+              <td>{{ log.details }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-dim);">No audit entries found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

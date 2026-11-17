@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login | CampusAssist NIT Durgapur{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v=1.2">
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="brand-logo-frame" style="width: 64px; height: 64px; margin: 0 auto 1rem; border-radius: 16px;">
+        <img src="{{ url_for('static', filename='images/download.svg') }}" alt="NIT Durgapur Official Emblem" class="brand-logo">
+      </div>
+      <div class="welcome-institute-pill" style="margin-bottom: 0.5rem;">
+        <span class="inst-crest">🏛️</span>
+        <span>NIT Durgapur &bull; Staff Administration</span>
+      </div>
+      <h1>Administrator Login</h1>
+      <p>Authorized access to institutional knowledge base and unresolved query triage</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('main.admin_login') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-group">
+        <label for="username" class="form-label">Administrator Username</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="Enter admin username" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Enter admin password" required>
+      </div>
+
+      <button type="submit" class="btn-action btn-primary btn-block">
+        Sign In to Portal
+      </button>
+    </form>
+
+    <div style="margin-top: 1.5rem; text-align: center; font-size: 0.8rem; color: var(--text-dim);">
+      CampusAssist Security &bull; Credentials managed via <code>manage_admin.py</code> CLI
+    </div>
+  </div>
+</div>
+{% endblock %}

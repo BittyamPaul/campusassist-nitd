@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Audit Trail | CampusAssist Administration{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+  
+  <!-- Header & Tabs -->
+  <div class="admin-page-header">
+    <div class="admin-page-title">
+      <h1>Administrative Audit Trail</h1>
+      <p>Immutable event log tracking all knowledge modifications, triage decisions, and administrative actions</p>
+    </div>
+
+    <div class="admin-nav-tabs">
+      <a href="{{ url_for('main.admin_dashboard') }}" class="admin-tab">Overview</a>
+      <a href="{{ url_for('main.admin_knowledge') }}" class="admin-tab">Knowledge Repository</a>
+      <a href="{{ url_for('main.admin_taxonomy') }}" class="admin-tab">Topics &amp; Intents</a>
+      <a href="{{ url_for('main.admin_unresolved') }}" class="admin-tab">Unresolved Queries</a>
+      <a href="{{ url_for('main.admin_audit') }}" class="admin-tab active">Audit Trail</a>
+    </div>
+  </div>
+
+  <!-- Filter Toolbar -->
+  <div class="data-card" style="margin-bottom: 1.25rem; padding: 1.25rem;">
+    <div style="display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+      <div style="display: flex; gap: 0.75rem; align-items: center; flex: 1; min-width: 280px; flex-wrap: wrap;">
+        <input type="text" id="audit-search-input" class="form-control" placeholder="Search audit logs (details, administrator, target)..." style="max-width: 380px; padding: 0.5rem 0.85rem;">
+        
+        <select id="audit-filter-action" class="form-control" style="width: auto; padding: 0.5rem 0.85rem;" onchange="location.href='?action=' + this.value">
+          <option value="all" {% if current_action == 'all' %}selected{% endif %}>All Actions</option>
+          <option value="create_knowledge" {% if current_action == 'create_knowledge' %}selected{% endif %}>Create Knowledge</option>
+          <option value="update_knowledge" {% if current_action == 'update_knowledge' %}selected{% endif %}>Update Knowledge</option>
+          <option value="verify_knowledge" {% if current_action == 'verify_knowledge' %}selected{% endif %}>Verify Knowledge</option>
+          <option value="create_topic" {% if current_action == 'create_topic' %}selected{% endif %}>Create Topic</option>
+          <option value="update_topic" {% if current_action == 'update_topic' %}selected{% endif %}>Update Topic</option>
+          <option value="create_intent" {% if current_action == 'create_intent' %}selected{% endif %}>Create Intent</option>
+          <option value="update_intent" {% if current_action == 'update_intent' %}selected{% endif %}>Update Intent</option>
+          <option value="triage_query" {% if current_action == 'triage_query' %}selected{% endif %}>Triage Query</option>
+          <option value="login" {% if current_action == 'login' %}selected{% endif %}>Authentication Logins</option>
+        </select>
+      </div>
+
+      <div style="color: var(--text-muted); font-size: 0.85rem;">
+        Showing {{ logs|length }} entries
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Log Table -->
+  <div class="data-card">
+    <div class="data-card-header">
+      <h2>Audit Events History</h2>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table" id="audit-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Administrator</th>
+            <th>Action</th>
+            <th>Target Entity</th>
+            <th>Entity ID</th>
+            <th>Details &amp; Parameters</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr class="audit-row"
+                data-admin="{{ log.admin_username }}"
+                data-action="{{ log.action }}"
+                data-target="{{ log.target_type or '' }}"
+                data-details="{{ log.details or '' }}">
+              <td style="font-size: 0.82rem; color: var(--text-muted); white-space: nowrap;">
+                {{ log.created_at }}
+              </td>
+              <td>
+                <strong>{{ log.admin_username }}</strong>
+              </td>
+              <td>
+                {% if 'create' in log.action %}
+                  <span class="badge badge-resolved">{{ log.action }}</span>
+                {% elif 'verify' in log.action %}
+                  <span class="badge badge-resolved" style="background: rgba(16, 185, 129, 0.2);">{{ log.action }}</span>
+                {% elif 'update' in log.action %}
+                  <span class="badge badge-verified">{{ log.action }}</span>
+                {% elif 'triage' in log.action %}
+                  <span class="badge badge-pending">{{ log.action }}</span>
+                {% else %}
+                  <span class="badge">{{ log.action }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <code>{{ log.target_type or '-' }}</code>
+              </td>
+              <td>
+                {% if log.target_id %}#{{ log.target_id }}{% else %}-{% endif %}
+              </td>
+              <td style="font-size: 0.86rem; color: var(--text-main); max-width: 480px;">
+                {{ log.details or 'No extra details recorded.' }}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                No audit log entries found for action filter '{{ current_action }}'.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}
