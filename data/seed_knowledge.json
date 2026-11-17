@@ -1,0 +1,307 @@
+{
+  "topics": [
+    {
+      "name": "Hostel",
+      "slug": "hostel",
+      "description": "Hostel accommodation, leave procedures, maintenance, and mess facilities at NIT Durgapur.",
+      "icon": "home",
+      "intents": [
+        {
+          "name": "Hostel Leave",
+          "slug": "hostel_leave",
+          "description": "Procedures, permissions, and gate passes required for leaving hostel premises or going home.",
+          "sample_queries": [
+            "How can I apply for hostel leave?",
+            "I want to go home for two days. What should I do?",
+            "Can I leave the hostel this weekend?",
+            "What permission do I need to go home?",
+            "Hostel leave application procedure",
+            "How to get gate pass to go home?",
+            "Night out permission from hostel",
+            "Can I stay outside hostel for the weekend?",
+            "Process for applying leave in NIT Durgapur hostel",
+            "How long can I take hostel leave for?",
+            "Duration of hostel leave and permission limits"
+          ],
+          "knowledge": {
+            "title": "NIT Durgapur Hostel Leave & Gate Pass Procedure (Demo Record)",
+            "summary": "Students must submit an official leave request with parent/guardian consent at least 24 hours in advance to obtain an approved digital or physical gate pass.",
+            "content": "1. Fill out the prescribed Hostel Leave Application form or submit the request on the Hall Management System / Warden portal.\n2. Provide written parental or local guardian consent (signed letter or registered parent email/SMS confirmation).\n3. Obtain signature / digital approval from the respective Hall Warden or Caretaker.\n4. Show the approved gate pass and student ID card at the hostel main security gate before departing.\n5. Upon return, report to the security desk / hostel register to record your arrival time.",
+            "detailed_procedure": "1. Fill out the prescribed Hostel Leave Application form or submit the request on the Hall Management System / Warden portal.\n2. Provide written parental or local guardian consent (signed letter or registered parent email/SMS confirmation).\n3. Obtain signature / digital approval from the respective Hall Warden or Caretaker.\n4. Show the approved gate pass and student ID card at the hostel main security gate before departing.\n5. Upon return, report to the security desk / hostel register to record your arrival time.",
+            "keywords": "hostel leave, gate pass, parent consent, warden approval, hall caretaker, home visit, night out, weekend leave",
+            "source_reference": "NIT Durgapur Hall Management Handbook (Demo Verified Record)",
+            "contact_authority": "Respective Hall Warden / Hall Caretaker Office",
+            "official_portal_url": "https://nitdgp.ac.in/p/hostel-management",
+            "verified_by": "NIT Durgapur Chief Warden Office (Demo Record)",
+            "verification_status": "verified",
+            "version": 1,
+            "is_active": 1
+          }
+        },
+        {
+          "name": "Room Change",
+          "slug": "room_change",
+          "description": "Policies and official procedures for changing or mutual swapping of hostel rooms.",
+          "sample_queries": [
+            "Can I change my hostel room?",
+            "I want to shift to another room in my hall",
+            "Room exchange with a classmate or friend",
+            "How to request a room change in NIT Durgapur?",
+            "Procedure for shifting rooms in hostel",
+            "Hostel room transfer application",
+            "Mutual room swap process"
+          ],
+          "knowledge": {
+            "title": "Hostel Room Change & Mutual Swap Procedure (Demo Record)",
+            "summary": "Room changes are permitted only on valid medical grounds or mutual exchange between eligible students of the same year and hall with Warden approval.",
+            "content": "1. For mutual exchange: Both students must submit a joint application specifying their current room numbers and reasons.\n2. For individual requests: Submit a written application addressed to the Hall Warden detailing compelling reasons (e.g., medical recommendation verified by Institute Medical Officer).\n3. Room changes during mid-semester are strictly discouraged except for verified emergencies.\n4. Once approved, coordinate with the Hall Caretaker for inventory check and handover of room keys.",
+            "detailed_procedure": "1. For mutual exchange: Both students must submit a joint application specifying their current room numbers and reasons.\n2. For individual requests: Submit a written application addressed to the Hall Warden detailing compelling reasons (e.g., medical recommendation verified by Institute Medical Officer).\n3. Room changes during mid-semester are strictly discouraged except for verified emergencies.\n4. Once approved, coordinate with the Hall Caretaker for inventory check and handover of room keys.",
+            "keywords": "room change, room transfer, mutual swap, medical ground, hall warden, hostel room shift",
+            "source_reference": "NIT Durgapur Hall Management Code (Demo Verified Record)",
+            "contact_authority": "Hall Warden / Chief Warden Secretariat",
+            "official_portal_url": "https://nitdgp.ac.in/p/hostel-management",
+            "verified_by": "NIT Durgapur Hall Administration (Demo Record)",
+            "verification_status": "verified",
+            "version": 1,
+            "is_active": 1
+          }
+        },
+        {
+          "name": "Mess Problem",
+          "slug": "mess_problem",
+          "description": "Reporting food quality, hygiene complaints, and mess rebate procedures.",
+          "sample_queries": [
+            "Food quality is bad in hall mess",
+            "How to complain about hostel mess food?",
+            "Mess hygiene complaint and poor food taste",
+            "Mess rebate policy for long leaves",
+            "Who is in charge of hostel mess complaints?",
+            "Mess committee contact details",
+            "Caterer not providing proper meals"
+          ],
+          "knowledge": {
+            "title": "Hostel Mess Complaints and Rebate Guidelines (Demo Record)",
+            "summary": "Mess grievances should be recorded in the Hall Mess Register and escalated to the student Mess Committee and Hall Warden.",
+            "content": "1. Immediate feedback: Log your complaint in the physical Mess Complaint Register available in the hall dining area.\n2. Contact the student Mess Representative / Mess Secretary of your hall to bring up the issue with the caterer during weekly review.\n3. For persistent quality or hygiene lapses, submit a written report to the Hall Warden with date, meal time, and specifics.\n4. Mess Rebate: For approved leaves exceeding 5 consecutive days, apply for mess rebate through the Warden office at least 3 days in advance.",
+            "detailed_procedure": "1. Immediate feedback: Log your complaint in the physical Mess Complaint Register available in the hall dining area.\n2. Contact the student Mess Representative / Mess Secretary of your hall to bring up the issue with the caterer during weekly review.\n3. For persistent quality or hygiene lapses, submit a written report to the Hall Warden with date, meal time, and specifics.\n4. Mess Rebate: For approved leaves exceeding 5 consecutive days, apply for mess rebate through the Warden office at least 3 days in advance.",
+            "keywords": "mess complaint, food quality, caterer, mess rebate, dining hall hygiene, mess secretary",
+            "source_reference": "NIT Durgapur Council of Wardens Regulations (Demo Verified Record)",
+            "contact_authority": "Hall Mess Committee & Hall Warden",
+            "official_portal_url": "https://nitdgp.ac.in/p/hostel-management",
+            "verified_by": "NIT Durgapur Council of Wardens (Demo Record)",
+            "verification_status": "verified",
+            "version": 1,
+            "is_active": 1
+          }
+        },
+        {
+          "name": "Electricity Issue",
+          "slug": "electricity_issue",
+          "description": "Reporting power outages, broken lights, fans, and electrical maintenance.",
+          "sample_queries": [
+            "No power in my hostel room",
+            "Fan is not working in hostel",
+            "Tube light in room is broken or flickering",
+            "Electrical socket not working in my room",
+            "How to register an electricity maintenance complaint?",
+            "Switchboard sparking in hostel corridor",
+            "Electrician contact for hostel repair"
+          ],
+          "knowledge": {
+            "title": "Hostel Electrical Maintenance & Repair Procedure (Demo Record)",
+            "summary": "Electrical faults must be entered in the Hall Maintenance Register at the caretaker desk for scheduled daily repairs by the Institute Estate Section.",
+            "content": "1. Visit your Hall Caretaker's office / security desk.\n2. Write down your Hall Number, Room Number, exact nature of fault (e.g., fan capacitor, socket, light), and contact number in the Maintenance Register.\n3. The Institute Estate Section electricians inspect and service rooms between 10:00 AM and 4:00 PM on working days.\n4. For emergency hazards (such as sparks, short circuits, or smoking cables), immediately alert the Caretaker or security guard for emergency breaker shutdown.",
+            "detailed_procedure": "1. Visit your Hall Caretaker's office / security desk.\n2. Write down your Hall Number, Room Number, exact nature of fault (e.g., fan capacitor, socket, light), and contact number in the Maintenance Register.\n3. The Institute Estate Section electricians inspect and service rooms between 10:00 AM and 4:00 PM on working days.\n4. For emergency hazards (such as sparks, short circuits, or smoking cables), immediately alert the Caretaker or security guard for emergency breaker shutdown.",
+            "keywords": "electricity complaint, power outage, broken fan, light repair, electrician, estate section, socket repair",
+            "source_reference": "NIT Durgapur Estate Section Service Manual (Demo Verified Record)",
+            "contact_authority": "Hall Caretaker / Estate Section Electrical Unit",
+            "official_portal_url": "https://nitdgp.ac.in/p/estate-section",
+            "verified_by": "NIT Durgapur Estate Section (Demo Record)",
+            "verification_status": "verified",
+            "version": 1,
+            "is_active": 1
+          }
+        },
+        {
+          "name": "Water Supply Issue",
+          "slug": "water_issue",
+          "description": "Reporting water shortages, drinking water filter problems, and plumbing repairs.",
+          "sample_queries": [
+            "Water cooler is broken on our floor",
+            "No running water in hostel washroom",
+            "Drinking water purifier filter is dirty or not working",
+            "Water shortage in hall",
+            "Plumbing repair request for hostel tap",
+            "Geyser or water heater not functioning"
+          ],
+          "knowledge": {
+            "title": "Hostel Water Supply & Plumbing Complaint Resolution (Demo Record)",
+            "summary": "Water supply issues, water purifier breakdowns, and plumbing leaks are addressed through the Hall Maintenance desk and Estate Civil wing.",
+            "content": "1. Note the specific issue (e.g., dry taps, leaking pipe, RO water cooler malfunction) in the Hall Caretaker's Civil/Plumbing Complaint Log.\n2. Specify the floor number and wing (e.g., 2nd Floor West Wing washroom).\n3. Routine plumbing repairs are executed daily by the Estate Section plumbers.\n4. Water cooler/purifier filters are serviced periodically under an AMC. Report any foul taste or filter alarm immediately to ensure water safety testing.",
+            "detailed_procedure": "1. Note the specific issue (e.g., dry taps, leaking pipe, RO water cooler malfunction) in the Hall Caretaker's Civil/Plumbing Complaint Log.\n2. Specify the floor number and wing (e.g., 2nd Floor West Wing washroom).\n3. Routine plumbing repairs are executed daily by the Estate Section plumbers.\n4. Water cooler/purifier filters are serviced periodically under an AMC. Report any foul taste or filter alarm immediately to ensure water safety testing.",
+            "keywords": "water shortage, plumbing repair, water purifier, RO cooler, tap broken, washroom water, estate civil",
+            "source_reference": "NIT Durgapur Estate Maintenance Code (Demo Verified Record)",
+            "contact_authority": "Hall Caretaker & Estate Civil/Water Works Section",
+            "official_portal_url": "https://nitdgp.ac.in/p/estate-section",
+            "verified_by": "NIT Durgapur Estate Maintenance (Demo Record)",
+            "verification_status": "verified",
+            "version": 1,
+            "is_active": 1
+          }
+        },
+        {
+          "name": "Hostel Facilities & Rules",
+          "slug": "hostel_rules",
+          "description": "General hostel guidelines, facilities, entry timings, curfew, guest rules, and boarder discipline.",
+          "sample_queries": [
+            "What information is available about hostel facilities?",
+            "What facilities are provided in NIT Durgapur hostels?",
+            "Hostel facilities and room amenities",
+            "What time is curfew at night for first years?",
+            "What is the hostel in-time at NIT Durgapur?",
+            "What are the curfew hours for hostels?",
+            "Are day scholars or outside guests allowed in hostel rooms?",
+            "What is the penalty for late entry to hostel?",
+            "Hostel code of conduct and discipline rules",
+            "Can parents stay in the hostel guest room?",
+            "What time do hostel gates close at night?"
+          ],
+          "knowledge": {
+            "title": "NIT Durgapur Hostel Facilities, Rules & Discipline Code (Demo Record)",
+            "summary": "Information regarding NIT Durgapur hostel facilities, room amenities, Wi-Fi, common rooms, security, curfew timings, and discipline code.",
+            "content": "1. Facilities & Amenities: Hostels provide basic furniture (cot, study table, chair, almirah), 24x7 security, water purifiers with water coolers, geysers in winter, high-speed Wi-Fi, and indoor recreation / TV common rooms.\n2. Curfew Timings: Normal gate closing is 10:00 PM (verify specific hall notice for semester variations). Late entries require signing the Late Register with valid reason.\n3. Guest Policy: Outside visitors and day scholars are strictly prohibited from entering boarder rooms. Parents may use Institute Guest House upon prior reservation.\n4. Electric Appliances: High-power appliances (heaters, induction stoves, immersion rods) are strictly prohibited inside student rooms.\n5. Anti-Ragging: Strict zero-tolerance policy. Any incident must be immediately reported to the Anti-Ragging Committee or Chief Warden.\n6. Quiet Hours: 11:00 PM to 6:00 AM must be observed as quiet hours for study and rest.",
+            "detailed_procedure": "1. Facilities & Amenities: Hostels provide basic furniture (cot, study table, chair, almirah), 24x7 security, water purifiers with water coolers, geysers in winter, high-speed Wi-Fi, and indoor recreation / TV common rooms.\n2. Curfew Timings: Normal gate closing is 10:00 PM (verify specific hall notice for semester variations). Late entries require signing the Late Register with valid reason.\n3. Guest Policy: Outside visitors and day scholars are strictly prohibited from entering boarder rooms. Parents may use Institute Guest House upon prior reservation.\n4. Electric Appliances: High-power appliances (heaters, induction stoves, immersion rods) are strictly prohibited inside student rooms.\n5. Anti-Ragging: Strict zero-tolerance policy. Any incident must be immediately reported to the Anti-Ragging Committee or Chief Warden.\n6. Quiet Hours: 11:00 PM to 6:00 AM must be observed as quiet hours for study and rest.",
+            "keywords": "hostel facilities, amenities, common room, Wi-Fi, hostel curfew, in-time, gate closing, guest policy, anti ragging, electrical appliances, discipline rules",
+            "source_reference": "NIT Durgapur Hostel Boarders Handbook (Demo Verified Record)",
+            "contact_authority": "Chief Warden Office / Hall Warden Team / Anti-Ragging Squad",
+            "official_portal_url": "https://nitdgp.ac.in/p/hostel-management",
+            "verified_by": "NIT Durgapur Chief Warden Office (Demo Record)",
+            "verification_status": "verified",
+            "version": 1,
+            "is_active": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Academics",
+      "slug": "academics",
+      "description": "Academic registrations, examinations, grading, attendance regulations, and institute procedures.",
+      "icon": "book-open",
+      "intents": [
+        {
+          "name": "Course Registration",
+          "slug": "course_registration",
+          "description": "Semester enrollment, subject selection, elective registration, and portal procedures.",
+          "sample_queries": [
+            "How to register for odd/even semester courses?",
+            "Semester registration procedure on Chanakya portal",
+            "What is the last date for course registration?",
+            "How to enroll in open electives or departmental electives?",
+            "Fee payment receipt submission for semester registration",
+            "Can I register late for semester subjects?",
+            "Course registration steps NIT Durgapur"
+          ],
+          "knowledge": {
+            "title": "NIT Durgapur Semester Course Registration Procedure (Demo Record)",
+            "summary": "Every student must complete online course registration through the Institute Academic ERP (Chanakya portal) at the beginning of each semester after clearing institute dues.",
+            "content": "1. Pay the prescribed semester fees via the official State Bank Collect / designated payment gateway.\n2. Log into the Chanakya ERP portal using your student credentials.\n3. Select core subjects, professional electives, and open electives as per the curriculum for your department and semester.\n4. Submit the registration draft for Faculty Advisor / Head of Department (HOD) approval.\n5. Download and print the finalized Registration Slip for your personal record once approved.\n6. Late registration is permitted only within the late registration window announced in the Academic Calendar upon payment of late fee.",
+            "detailed_procedure": "1. Pay the prescribed semester fees via the official State Bank Collect / designated payment gateway.\n2. Log into the Chanakya ERP portal using your student credentials.\n3. Select core subjects, professional electives, and open electives as per the curriculum for your department and semester.\n4. Submit the registration draft for Faculty Advisor / Head of Department (HOD) approval.\n5. Download and print the finalized Registration Slip for your personal record once approved.\n6. Late registration is permitted only within the late registration window announced in the Academic Calendar upon payment of late fee.",
+            "keywords": "course registration, Chanakya portal, semester enrollment, elective choice, fee receipt, faculty advisor",
+            "source_reference": "NIT Durgapur Academic Ordinances (Demo Verified Record)",
+            "contact_authority": "Academic Section / Departmental Faculty Advisor",
+            "official_portal_url": "https://chanakya.nitdgp.ac.in",
+            "verified_by": "NIT Durgapur Academic Section (Demo Record)",
+            "verification_status": "verified",
+            "version": 1,
+            "is_active": 1
+          }
+        },
+        {
+          "name": "Examination Regulations",
+          "slug": "examination_rules",
+          "description": "Mid-term and end-term exam regulations, admit cards, calculators, and supplementary exams.",
+          "sample_queries": [
+            "How do I find examination information?",
+            "Where can I find examination rules and schedule?",
+            "Examination information and guidelines NIT Durgapur",
+            "What are the rules for mid-term and end-term exams?",
+            "Can I carry a programmable calculator into the exam hall?",
+            "How to download examination admit card?",
+            "What happens if I miss an exam due to illness?",
+            "Supplementary or backlog exam rules NIT Durgapur",
+            "Exam hall guidelines and unfair means policy"
+          ],
+          "knowledge": {
+            "title": "NIT Durgapur Examination Guidelines & Regulations (Demo Record)",
+            "summary": "Examinations consist of Continuous Assessment, Mid-Semester (30 marks), and End-Semester (50 marks). Students must possess a valid admit card and student ID.",
+            "content": "1. Admit Card: Download and print the exam admit card from the Chanakya portal before the commencement of examinations.\n2. Reporting Time: Arrive at the designated examination hall at least 15 minutes before the scheduled start.\n3. Prohibited Items: Mobile phones, smartwatches, programmable calculators, and unauthorized materials are strictly forbidden inside the hall.\n4. Medical Absence: If an exam is missed due to acute illness, submit a medical certificate verified by the NITD Medical Officer to the Dean (Academic) within 3 working days.\n5. Supplementary Exams: Held during summer break for students with 'F' grade who fulfill the minimum attendance requirement.",
+            "detailed_procedure": "1. Admit Card: Download and print the exam admit card from the Chanakya portal before the commencement of examinations.\n2. Reporting Time: Arrive at the designated examination hall at least 15 minutes before the scheduled start.\n3. Prohibited Items: Mobile phones, smartwatches, programmable calculators, and unauthorized materials are strictly forbidden inside the hall.\n4. Medical Absence: If an exam is missed due to acute illness, submit a medical certificate verified by the NITD Medical Officer to the Dean (Academic) within 3 working days.\n5. Supplementary Exams: Held during summer break for students with 'F' grade who fulfill the minimum attendance requirement.",
+            "keywords": "exam regulations, admit card, mid sem, end sem, supplementary exam, unfair means, calculator rules",
+            "source_reference": "NIT Durgapur Examination Guidelines Manual (Demo Verified Record)",
+            "contact_authority": "Controller of Examinations (CoE) / Academic Section",
+            "official_portal_url": "https://nitdgp.ac.in/p/academic-curriculum",
+            "verified_by": "NIT Durgapur Examination Cell (Demo Record)",
+            "verification_status": "verified",
+            "version": 1,
+            "is_active": 1
+          }
+        },
+        {
+          "name": "Attendance Rules",
+          "slug": "attendance_rules",
+          "description": "Minimum attendance requirements, debarment criteria, and medical leave condonation.",
+          "sample_queries": [
+            "What is the minimum attendance required at NIT Durgapur?",
+            "Is 75% attendance compulsory for all subjects?",
+            "What happens if my attendance is below 75 percent?",
+            "Can I get attendance relaxation on medical grounds?",
+            "Am I debarred from writing end semester exams due to low attendance?",
+            "Attendance policy for lab and theory classes"
+          ],
+          "knowledge": {
+            "title": "NIT Durgapur Academic Attendance Regulations (Demo Record)",
+            "summary": "A minimum of 75% attendance in each registered theory and laboratory subject is mandatory to be eligible to appear in the End-Semester Examination.",
+            "content": "1. Standard Requirement: Every student must attend a minimum of 75% of classes held in each subject.\n2. Attendance Condonation: Condonation of up to 10% (i.e. between 65% and 75%) may be considered by the Dean (Academic) strictly for authorized institute representation or verified medical hospitalization.\n3. Medical Leave Intimation: Medical certificates from external hospitals must be countersigned by the Chief Medical Officer (CMO), NIT Durgapur Health Centre within 7 days of returning.\n4. Debarment: Students having less than the required attendance will be awarded a 'Debarred' (W/F) status and will not be permitted to write the end-semester exam for that subject.",
+            "detailed_procedure": "1. Standard Requirement: Every student must attend a minimum of 75% of classes held in each subject.\n2. Attendance Condonation: Condonation of up to 10% (i.e. between 65% and 75%) may be considered by the Dean (Academic) strictly for authorized institute representation or verified medical hospitalization.\n3. Medical Leave Intimation: Medical certificates from external hospitals must be countersigned by the Chief Medical Officer (CMO), NIT Durgapur Health Centre within 7 days of returning.\n4. Debarment: Students having less than the required attendance will be awarded a 'Debarred' (W/F) status and will not be permitted to write the end-semester exam for that subject.",
+            "keywords": "attendance percentage, 75 percent attendance, debarred, attendance shortage, medical condonation, duty leave",
+            "source_reference": "NIT Durgapur Academic Regulations (Demo Verified Record)",
+            "contact_authority": "Subject Teacher / Department HOD / Dean (Academic)",
+            "official_portal_url": "https://nitdgp.ac.in/p/academic-regulations",
+            "verified_by": "NIT Durgapur Dean (Academic) Office (Demo Record)",
+            "verification_status": "verified",
+            "version": 1,
+            "is_active": 1
+          }
+        },
+        {
+          "name": "Academic Procedures",
+          "slug": "academic_procedures",
+          "description": "Bonafide certificates, official transcripts, grade cards, and NOC for internships.",
+          "sample_queries": [
+            "How to get a bonafide certificate from NIT Durgapur?",
+            "Application procedure for official transcripts",
+            "How to apply for NOC for summer internship?",
+            "Duplicate grade card or marksheet issue",
+            "Migration certificate application process",
+            "Letter of recommendation and academic clearance"
+          ],
+          "knowledge": {
+            "title": "NIT Durgapur Academic Certificates & Transcripts Procedure (Demo Record)",
+            "summary": "Certificates including Bonafide, Transcripts, and Internship NOCs can be requested through prescribed application forms submitted to the Academic Section.",
+            "content": "1. Bonafide Certificate: Submit an application addressed to the Assistant Registrar (Academic) mentioning your Roll Number, Department, and purpose. Processing takes 2-3 working days.\n2. Official Transcripts: Pay the transcript fee on SBI Collect, attach copies of all grade cards, and submit the transcript requisition form to the Academic Section.\n3. Internship NOC: Obtain the training/internship offer letter, submit the NOC requisition form endorsed by your Department Head (HOD) and T&P (Training & Placement) Cell.\n4. Collection: Collect signed and stamped original documents from the Academic Section counter during student counter hours (2:00 PM to 4:00 PM).",
+            "detailed_procedure": "1. Bonafide Certificate: Submit an application addressed to the Assistant Registrar (Academic) mentioning your Roll Number, Department, and purpose. Processing takes 2-3 working days.\n2. Official Transcripts: Pay the transcript fee on SBI Collect, attach copies of all grade cards, and submit the transcript requisition form to the Academic Section.\n3. Internship NOC: Obtain the training/internship offer letter, submit the NOC requisition form endorsed by your Department Head (HOD) and T&P (Training & Placement) Cell.\n4. Collection: Collect signed and stamped original documents from the Academic Section counter during student counter hours (2:00 PM to 4:00 PM).",
+            "keywords": "bonafide certificate, transcripts, internship NOC, grade card, migration certificate, academic section counter",
+            "source_reference": "NIT Durgapur Student Academic Handbook (Demo Verified Record)",
+            "contact_authority": "Academic Section (Student Section Counter)",
+            "official_portal_url": "https://nitdgp.ac.in/p/academic-section",
+            "verified_by": "NIT Durgapur Academic Section (Demo Record)",
+            "verification_status": "verified",
+            "version": 1,
+            "is_active": 1
+          }
+        }
+      ]
+    }
+  ]
+}
